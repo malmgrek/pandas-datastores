@@ -20,10 +20,13 @@ class Endpoint():
 
     """
 
+    # TODO: Rename functions to hooks
     url = attr.ib()
     session = attr.ib(factory=requests.Session)
     defaults = attr.ib(default={})
     headers = attr.ib(default={})
+    headers_hook = attr.ib(default=identity)
+    tf_url = attr.ib(default=identity)
     tf_get_params = attr.ib(default=identity)
     tf_get_response = attr.ib(default=identity)
     tf_get_resource = attr.ib(default=identity)
@@ -37,7 +40,7 @@ class Endpoint():
         r = self.session.post(
             url=url,
             json=self.tf_post_params(**params),
-            headers=self.headers,
+            headers=self.headers_hook(self.headers),
             timeout=self.timeout
         )
         r.raise_for_status()
@@ -49,6 +52,10 @@ class Endpoint():
             **update_dict(self.defaults, self.tf_get_params(params))
         )
         logging.debug("GET {0}".format(url))
-        r = self.session.get(url, headers=self.headers, timeout=self.timeout)
+        r = self.session.get(
+            self.tf_url(url),
+            headers=self.headers_hook(self.headers),
+            timeout=self.timeout
+        )
         r.raise_for_status()
         return self.tf_get_response(r)
