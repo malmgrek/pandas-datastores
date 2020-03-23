@@ -252,8 +252,8 @@ def API():
                     'daylowprice': float,
                     'closeprice1d': float,
                     'turnover': float,
-                    'quantity': int,
-                    'timestamp': int,
+                    'quantity': float,
+                    'timestamp': float,
                     'this_month_millistream': float,
                 }),
                 lambda x: pd.DataFrame(
