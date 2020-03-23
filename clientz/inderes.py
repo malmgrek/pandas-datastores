@@ -142,6 +142,29 @@ ARGS_1 = ["0", "2020", "2021"]
 
 
 def API():
+    """Client for downloading data in the Inderes table
+
+    Main endpoints:
+
+        * data_table -- Stock price table
+          -> ``get`` returns ``pd.DataFrame``.
+        * company_forecast -- Some fundamentals, forecasts and recommendations
+          -> ``get`` returns ``dict``.
+
+    Example
+    -------
+
+    .. code-block :: python
+
+        from clientz.inderes import API
+
+        api = API()
+        table = api.data_table.get()
+        forecast = api.company_forecast.get()
+
+    TODO: Example on how to retrieve the most important fundamentals
+
+    """
 
     session = requests.Session()
 
