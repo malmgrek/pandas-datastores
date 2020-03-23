@@ -9,6 +9,10 @@ from clientz import Endpoint, utils
 def API():
     """Yahoo! Finance
 
+    NOTE: There are already quite good existing projects such as `yfinance`
+          that solve this proble. However, some are very heavy or not
+          maintained.
+
     Examples
     --------
 
@@ -34,6 +38,7 @@ def API():
             }
         )
 
+        # TODO: Requires scraping
         financials = Endpoint(
             session=session,
             url="https://finance.yahoo.com/quote/",
