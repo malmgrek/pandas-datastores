@@ -5,3 +5,4 @@ tmp/
 __pycache__
 *_flycheck_*
 MANIFEST*
+*egg-info
