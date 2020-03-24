@@ -162,6 +162,15 @@ def API():
         table = api.data_table.get()
         forecast = api.company_forecast.get()
 
+        # P/E ratios
+        pe = calculate_pe(y=forecast["this"], t=table)
+
+        # P/B ratios
+        pb = calculate_pb(y=forecast["this"], t=table)
+
+        # Dividend yield
+        div_yield = calculate_div_yield(y=forecast["this"], t=table)
+
     TODO: Example on how to retrieve the most important fundamentals
 
     """
@@ -351,7 +360,7 @@ def calculate_pb(y: pd.DataFrame, t: pd.DataFrame) -> pd.Series:
     return t["lastprice"].loc[index].div(y["bv"]).mul(no_of_shares(y))
 
 
-def calculate_pe(y, t):
+def calculate_pe(y: pd.DataFrame, t: pd.DataFrame)-> pd.Series:
     """Price to earnings ratio per company
 
     Parameters
@@ -362,3 +371,15 @@ def calculate_pe(y, t):
     """
     index = y.index
     return t["lastprice"].loc[index].div(y["net_earnings"]).mul(no_of_shares(y))
+
+
+def calculate_div_yield(y: pd.DataFrame, t: pd.DataFrame) -> pd.Series:
+    """Divided yield per company
+
+    Parameters
+    ----------
+    y: Company forecast for a year
+    t: Data table
+    """
+    index = y.index
+    return y["diva"].div(t["lastprice"].loc[index])
