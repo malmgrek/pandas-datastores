@@ -303,6 +303,11 @@ def API():
     return Client()
 
 
+#
+# Tools for using the data
+#
+
+
 def update_isin_lookup():
     """Fetch (ISIN, company_name) pairs
 
@@ -320,3 +325,40 @@ def update_isin_lookup():
         )
 
     logging.info("Updated ISIN lookup")
+
+
+def no_of_shares(y: pd.DataFrame) -> pd.Series:
+    """Number of shares per company
+
+    Parameters
+    ----------
+    y: Company forecast for a given year
+
+    """
+    return y["no_of_shares_k_year_end"].add(y["no_of_shares_a_year_end"])
+
+
+def calculate_pb(y: pd.DataFrame, t: pd.DataFrame) -> pd.Series:
+    """Price to book ratio per company
+
+    Parameters
+    ----------
+    y: Company forecast for a given year
+    t: Data table
+
+    """
+    index = y.index
+    return t["lastprice"].loc[index].div(y["bv"]).mul(no_of_shares(y))
+
+
+def calculate_pe(y, t):
+    """Price to earnings ratio per company
+
+    Parameters
+    ----------
+    y: Company forecast for a year
+    t: Data table
+
+    """
+    index = y.index
+    return t["lastprice"].loc[index].div(y["net_earnings"]).mul(no_of_shares(y))
