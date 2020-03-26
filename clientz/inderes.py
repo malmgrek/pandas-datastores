@@ -209,7 +209,8 @@ def API():
                 lambda x: pd.DataFrame(
                     index=[isin.get(v["isin"]) for v in x],
                     data=[
-                        utils.dissoc(v, "target_price", "suositus", "isin") for v in x
+                        utils.dissoc(v, "target_price", "suositus", "isin")
+                        for v in x
                     ]
                 ).astype(float),
                 utils.listfilter(lambda x: x["year"] == year)
@@ -257,7 +258,11 @@ def API():
             url="https://www.inderes.fi/fi/osakevertailu",
             headers_hook=headers_hook,
             tf_get_response=utils.compose(
-                lambda d: d.get("inderes_ranking").get("company_gathered_data"),
+                lambda d: (
+                    d
+                    .get("inderes_ranking")
+                    .get("company_gathered_data")
+                ),
                 json.loads,
                 lambda res: (
                     res
