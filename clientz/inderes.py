@@ -195,7 +195,7 @@ def API():
                 index=[isin.get(v["isin"]) for v in x],
                 data=[
                     {
-                        "target_price": float(v.get("target_price", np.nan)),
+                        "target_price": np.float(v.get("target_price", "NaN")),
                         "suositus": v.get("suositus"),
                         "isin": v.get("isin")
                     } for v in x
@@ -361,8 +361,10 @@ def calculate_pb(y: pd.DataFrame, t: pd.DataFrame) -> pd.Series:
     t: Data table
 
     """
-    index = y.index
-    return t["lastprice"].loc[index].div(y["bv"]).mul(no_of_shares(y))
+    index = y.index.intersection(t.index)
+    y = y.loc[index]
+    t = t.loc[index]
+    return t["lastprice"].div(y["bv"]).mul(no_of_shares(y))
 
 
 def calculate_pe(y: pd.DataFrame, t: pd.DataFrame)-> pd.Series:
@@ -374,8 +376,10 @@ def calculate_pe(y: pd.DataFrame, t: pd.DataFrame)-> pd.Series:
     t: Data table
 
     """
-    index = y.index
-    return t["lastprice"].loc[index].div(y["net_earnings"]).mul(no_of_shares(y))
+    index = y.index.intersection(t.index)
+    y = y.loc[index]
+    t = t.loc[index]
+    return t["lastprice"].div(y["net_earnings"]).mul(no_of_shares(y))
 
 
 def calculate_div_yield(y: pd.DataFrame, t: pd.DataFrame) -> pd.Series:
@@ -386,5 +390,7 @@ def calculate_div_yield(y: pd.DataFrame, t: pd.DataFrame) -> pd.Series:
     y: Company forecast for a year
     t: Data table
     """
-    index = y.index
-    return y["diva"].div(t["lastprice"].loc[index])
+    index = y.index.intersection(t.index)
+    y = y.loc[index]
+    t = t.loc[index]
+    return y["diva"].div(t["lastprice"])
