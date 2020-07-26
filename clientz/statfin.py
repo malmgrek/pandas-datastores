@@ -42,42 +42,20 @@ from clientz import Endpoint, utils
 
 
 def tf_get_response(res):
-
     raw = res.json()
-
-    @attr.s(frozen=True)
-    class Variable():
-        """Container for variable data
-
-        """
-        text = attr.ib()
-        values = attr.ib()
-        valueTexts = attr.ib()
-
-    @attr.s(frozen=True)
-    class Metadata():
-        """Container for metadata
-
-        """
-        title = attr.ib()
-        codes = attr.ib()
-
-    metadata = Metadata(
-        title=raw["title"],
-        codes=[v["code"] for v in raw["variables"]]
-    )
-    for v in raw["variables"]:
-        object.__setattr__(
-            metadata,
-            v["code"],
-            Variable(
-                text=v["text"],
-                values=v["values"],
-                valueTexts=v["valueTexts"]
-            )
-        )
-
-    return metadata
+    return {
+        **{
+            "title": raw["title"],
+            "codes": [v["code"] for v in raw["variables"]]
+        },
+        **{
+            v["code"]: {
+                "text": v["text"],
+                "values": v["values"],
+                "valueTexts": v["valueTexts"]
+            } for v in raw["variables"]
+        }
+    }
 
 
 def API():
