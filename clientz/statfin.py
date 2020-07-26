@@ -88,9 +88,9 @@ def API():
 
     .. code-block:: python
 
-        import aptprices as apt
+        from clientz import statfin
 
-        api = apt.StatFin()
+        api = statfin.API()
 
         # Query data for a zip code
         res = api.apartment_prices_quarterly.post(
