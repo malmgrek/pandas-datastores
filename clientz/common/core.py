@@ -3,7 +3,7 @@ import requests
 
 import attr
 
-from clientz.utils import identity, update_dict
+from clientz.common.utils import identity, update_dict
 
 
 def add_params(url, **params):

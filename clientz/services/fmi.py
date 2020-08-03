@@ -1,3 +1,6 @@
+"""Finnish Meteorological Institute
+
+"""
 import requests
 
 import attr
@@ -81,8 +84,8 @@ def API():
         index = utils.pipe(
             soup.find("positions"),
             strip_block,
-            utils.listmap(utils.listfilter(utils.maybe_to_int)),
-            utils.listmap(lambda x: utils.maybe_to_int(x[0]) if len(x) else None),
+            utils.listmap(utils.listfilter(utils.safe_int)),
+            utils.listmap(lambda x: utils.safe_int(x[0]) if len(x) else None),
         )
         columns = [
             tag.attrs.get("name")
@@ -91,7 +94,7 @@ def API():
         data = utils.pipe(
             soup.find("DataBlock").find("doubleOrNilReasonTupleList"),
             strip_block,
-            utils.listmap(utils.listmap(utils.maybe_to_float))
+            utils.listmap(utils.listmap(utils.safe_float))
         )
         assert len(index) == len(data), "Index and values are incompatible"
         return (index, data, columns)

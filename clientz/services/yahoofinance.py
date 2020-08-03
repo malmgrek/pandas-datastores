@@ -1,3 +1,6 @@
+"""Yahoo Finance
+
+"""
 import json
 import requests
 
@@ -100,6 +103,13 @@ def API():
                     .strip()
                 )
             )
+        )
+
+        holders = Endpoint(
+            session=session,
+            url="https://finance.yahoo.com/quote/",
+            tf_get_resource=lambda ticker: ticker + "/holders",
+            tf_get_response=lambda res: pd.read_html(res.text)
         )
 
     return Client()

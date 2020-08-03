@@ -12,7 +12,7 @@ import attr
 import pandas as pd
 
 from clientz import Endpoint, utils
-from clientz.statfin import tf_get_response
+from clientz.services.statfin import tf_get_response
 
 
 def API():
