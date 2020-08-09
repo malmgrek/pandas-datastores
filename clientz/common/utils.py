@@ -72,6 +72,8 @@ def safe_type(type_class, x):
         return type_class(x)
     except ValueError:
         return None
+    except TypeError:
+        return None
 
 
 def safe_float(x):
