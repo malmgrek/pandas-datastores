@@ -6,6 +6,7 @@ import logging
 import os
 import requests
 from requests.utils import requote_uri
+from typing import Dict
 
 import attr
 import pandas as pd
@@ -265,7 +266,7 @@ def update_isin_lookup():
 
 def CompanyForecast(filepath=os.path.join(CACHE, "company-forecast.p")):
 
-    def download(api):
+    def download(api) -> Dict:
         return api.company_forecast.get()
 
     return Pickle(filepath, download)
@@ -287,13 +288,19 @@ def RawJSON(filepath=os.path.join(CACHE, "raw-json.json")):
     return JSON(filepath, download)
 
 
-def ShareNumber():
+def ShareNumber(year: str="this"):
     """Company-wise number of shares
+
+    Parameters
+    ----------
+    year : str
+        Either 'this' or 'next'
 
     """
 
     @lift
     def share_number(company_forecast: pd.DataFrame):
+        company_forecast = company_forecast[year]
         return (
             company_forecast["no_of_shares_k_year_end"]
             .add(company_forecast["no_of_shares_a_year_end"])
@@ -302,7 +309,7 @@ def ShareNumber():
     return share_number(CompanyForecast())
 
 
-def PriceToBook():
+def PriceToBook(year: str="this"):
     """Price to book ratio
 
     """
@@ -313,6 +320,7 @@ def PriceToBook():
             data_table: pd.DataFrame,
             share_number: pd.Series
     ):
+        company_forecast = company_forecast[year]
         index = company_forecast.index.intersection(data_table.index)
         company_forecast = company_forecast.loc[index]
         data_table = data_table.loc[index]
@@ -325,7 +333,7 @@ def PriceToBook():
     return price_to_book(CompanyForecast(), DataTable(), ShareNumber())
 
 
-def PriceToEarnings():
+def PriceToEarnings(year: str="this"):
     """Price to earnings ratio
 
     """
@@ -333,22 +341,21 @@ def PriceToEarnings():
     @lift
     def price_to_earnings(
             company_forecast: pd.DataFrame,
-            data_table: pd.DataFrame,
-            share_number: pd.Series
+            data_table: pd.DataFrame
     ):
+        company_forecast = company_forecast[year]
         index = company_forecast.index.intersection(data_table.index)
         company_forecast = company_forecast.loc[index]
         data_table = data_table.loc[index]
         return (
             data_table["lastprice"]
-            .div(company_forecast["net_earnings"])
-            .mul(share_number)
+            .div(company_forecast["eps"])
         )
 
-    return price_to_earnings(CompanyForecast(), DataTable(), ShareNumber())
+    return price_to_earnings(CompanyForecast(), DataTable())
 
 
-def DividendYield():
+def DividendYield(year: str="this"):
     """Dividend yield
 
     """
@@ -358,6 +365,7 @@ def DividendYield():
             company_forecast: pd.DataFrame,
             data_table: pd.DataFrame
     ):
+        company_forecast = company_forecast[year]
         index = company_forecast.index.intersection(data_table.index)
         company_forecast = company_forecast.loc[index]
         data_table = data_table.loc[index]
