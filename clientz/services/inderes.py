@@ -8,11 +8,14 @@ import requests
 from requests.utils import requote_uri
 
 import attr
-import numpy as np
 import pandas as pd
 from user_agent import generate_user_agent
 
 from clientz import Endpoint, utils
+from clientz.common.caching import (JSON, Pickle, lift)
+
+
+CACHE = os.path.abspath(".inderes-cache")
 
 
 def here(*args):
@@ -71,6 +74,7 @@ def API():
 
     Example
     -------
+    FIXME: Update using cache objects
 
     .. code-block :: python
 
@@ -113,7 +117,7 @@ def API():
                 index=[isin.get(v["isin"]) for v in x],
                 data=[
                     {
-                        "target_price": np.float(v.get("target_price", "NaN")),
+                        "target_price": utils.safe_float(v.get("target_price")),
                         "suositus": v.get("suositus"),
                         "isin": v.get("isin")
                     } for v in x
@@ -235,9 +239,9 @@ def API():
     return Client()
 
 
-#
-# Tools for using the data
-#
+# ====================
+# Cache source objects
+# ====================
 
 
 def update_isin_lookup():
@@ -259,56 +263,107 @@ def update_isin_lookup():
     logging.info("Updated ISIN lookup")
 
 
-def no_of_shares(y: pd.DataFrame) -> pd.Series:
-    """Number of shares per company
+def CompanyForecast(filepath=os.path.join(CACHE, "company-forecast.p")):
 
-    Parameters
-    ----------
-    y: Company forecast for a given year
+    def download(api):
+        return api.company_forecast.get()
 
-    """
-    return y["no_of_shares_k_year_end"].add(y["no_of_shares_a_year_end"])
+    return Pickle(filepath, download)
 
 
-def calculate_pb(y: pd.DataFrame, t: pd.DataFrame) -> pd.Series:
-    """Price to book ratio per company
+def DataTable(filepath=os.path.join(CACHE, "data-table.p")):
 
-    Parameters
-    ----------
-    y: Company forecast for a given year
-    t: Data table
+    def download(api):
+        return api.data_table.get()
 
-    """
-    index = y.index.intersection(t.index)
-    y = y.loc[index]
-    t = t.loc[index]
-    return t["lastprice"].div(y["bv"]).mul(no_of_shares(y))
+    return Pickle(filepath, download)
 
 
-def calculate_pe(y: pd.DataFrame, t: pd.DataFrame)-> pd.Series:
-    """Price to earnings ratio per company
+def RawJSON(filepath=os.path.join(CACHE, "raw-json.json")):
 
-    Parameters
-    ----------
-    y: Company forecast for a year
-    t: Data table
+    def download(api):
+        return api.raw_json.get()
+
+    return JSON(filepath, download)
+
+
+def ShareNumber():
+    """Company-wise number of shares
 
     """
-    index = y.index.intersection(t.index)
-    y = y.loc[index]
-    t = t.loc[index]
-    return t["lastprice"].div(y["net_earnings"]).mul(no_of_shares(y))
+
+    @lift
+    def share_number(company_forecast: pd.DataFrame):
+        return (
+            company_forecast["no_of_shares_k_year_end"]
+            .add(company_forecast["no_of_shares_a_year_end"])
+        )
+
+    return share_number(CompanyForecast())
 
 
-def calculate_div_yield(y: pd.DataFrame, t: pd.DataFrame) -> pd.Series:
-    """Divided yield per company
+def PriceToBook():
+    """Price to book ratio
 
-    Parameters
-    ----------
-    y: Company forecast for a year
-    t: Data table
     """
-    index = y.index.intersection(t.index)
-    y = y.loc[index]
-    t = t.loc[index]
-    return y["diva"].div(t["lastprice"])
+
+    @lift
+    def price_to_book(
+            company_forecast: pd.DataFrame,
+            data_table: pd.DataFrame,
+            share_number: pd.Series
+    ):
+        index = company_forecast.index.intersection(data_table.index)
+        company_forecast = company_forecast.loc[index]
+        data_table = data_table.loc[index]
+        return (
+            data_table["lastprice"]
+            .div(company_forecast["bv"])
+            .mul(share_number)
+        )
+
+    return price_to_book(CompanyForecast(), DataTable(), ShareNumber())
+
+
+def PriceToEarnings():
+    """Price to earnings ratio
+
+    """
+
+    @lift
+    def price_to_earnings(
+            company_forecast: pd.DataFrame,
+            data_table: pd.DataFrame,
+            share_number: pd.Series
+    ):
+        index = company_forecast.index.intersection(data_table.index)
+        company_forecast = company_forecast.loc[index]
+        data_table = data_table.loc[index]
+        return (
+            data_table["lastprice"]
+            .div(company_forecast["net_earnings"])
+            .mul(share_number)
+        )
+
+    return price_to_earnings(CompanyForecast(), DataTable(), ShareNumber())
+
+
+def DividendYield():
+    """Dividend yield
+
+    """
+
+    @lift
+    def dividend_yield(
+            company_forecast: pd.DataFrame,
+            data_table: pd.DataFrame
+    ):
+        index = company_forecast.index.intersection(data_table.index)
+        company_forecast = company_forecast.loc[index]
+        data_table = data_table.loc[index]
+        return (
+            company_forecast["diva"]
+            .div(data_table["lastprice"])
+        )
+
+    return dividend_yield(CompanyForecast(), DataTable())
