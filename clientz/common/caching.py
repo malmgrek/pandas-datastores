@@ -75,6 +75,21 @@ def JSON(filepath: str, download: Callable):
     return Landfill(filepath, download, dump, load)
 
 
+def HDF5(filepath: str, download: Callable):
+    """Landfill of hdf5
+
+    """
+    def dump(data, path):
+        # TODO
+        return
+
+    def load(path):
+        # TODO
+        return
+
+    return Landfill(filepath, download, dump, load)
+
+
 def lift(func: Callable):
     """Lift a function
 
@@ -112,6 +127,7 @@ def bind(func: Callable):
     """
     def bound(*sources: Source):
         return Source(
+            # FIXME: Unnecessary lambda definition?
             download=lambda api: func(
                 *utils.tuplemap(lambda x: x.download(api))(sources)
             ).download(api),
@@ -131,7 +147,8 @@ def Concat(sources: Iterable[Source], **kwargs):
 
     """
 
+    @lift
     def concat(*frames: pd.DataFrame, **kwargs):
         return pd.concat(frames, **kwargs)
 
-    return lift(concat)(*sources)
+    return concat(*sources)
