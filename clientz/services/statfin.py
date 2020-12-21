@@ -3,8 +3,6 @@
 API documentation: http://pxnet2.stat.fi/api1.html
 
 
-
-
 StatFin: http://pxnet2.stat.fi/PXWeb/api/v1/fi/StatFin/
 
 Talotyyppi | Explanation
@@ -41,7 +39,7 @@ import pandas as pd
 from clientz import Endpoint, utils
 
 
-def tf_get_response(res):
+def transform_get_response(res):
     raw = res.json()
     return {
         **{
@@ -149,14 +147,14 @@ def API():
 
         apartment_prices_quarterly = ApartmentPricesEndpoint(
             url="asu/ashi/nj/statfin_ashi_pxt_112p.px?",
-            tf_get_response=tf_get_response,
+            tf_get_response=transform_get_response,
             tf_post_params=tf_post_params,
             tf_post_response=tf_post_response
         )
 
         apartment_prices_yearly = ApartmentPricesEndpoint(
             url="asu/ashi/vv/statfin_ashi_pxt_112q.px?",
-            tf_get_response=tf_get_response,
+            tf_get_response=transform_get_response,
             tf_post_params=tf_post_params,
             tf_post_response=tf_post_response
         )

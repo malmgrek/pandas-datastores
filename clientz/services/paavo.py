@@ -12,7 +12,7 @@ import attr
 import pandas as pd
 
 from clientz import Endpoint, utils
-from clientz.services.statfin import tf_get_response
+from clientz.services.statfin import transform_get_response
 
 
 def API():
@@ -84,7 +84,7 @@ def API():
         #
         all_variables_2018 = PaavoEndpoint(
             url="2018/paavo_9_koko_2018.px",
-            tf_get_response=tf_get_response,
+            tf_get_response=transform_get_response,
             tf_post_params=tf_post_params,
             tf_post_response=tf_post_response
         )

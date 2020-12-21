@@ -16,7 +16,7 @@ from clientz import Endpoint, utils
 from clientz.common.caching import (JSON, Pickle, lift)
 
 
-CACHE = os.path.abspath(".inderes-cache")
+CACHE = os.path.abspath(".clientz-inderes")
 
 
 def here(*args):

@@ -1,12 +1,18 @@
 """Finnish Meteorological Institute
 
 """
+
+import os
 import requests
 
 import attr
 import pandas as pd
 
 from clientz import Endpoint, utils
+from clientz.common.caching import Pickle
+
+
+CACHE = os.path.abspath(".clientz-institute")
 
 
 def API():
@@ -162,3 +168,14 @@ def API():
         )
 
     return Client()
+
+
+def Helsinki(filepath=os.path.join(CACHE, "helsinki.p")):
+
+    def download(api):
+        return api.forecast_hirlam_surface_point_hourly_2d.get(
+            lat=60.1699,
+            lon=24.9384
+        )
+
+    return Pickle(filepath, download)
