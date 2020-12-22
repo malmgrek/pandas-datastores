@@ -26,8 +26,8 @@ The data source contains various quantities.
 
 from clientz.services import fmi
 
-api = fmi.API()
 
+api = fmi.API()
 helsinki = fmi.Helsinki().download(api)
 # helsinki.head().ilod[:, :5]
 # 
@@ -61,6 +61,7 @@ Download fundamentals for various Finnish companies listed in Helsinki stock exc
 ```python
 
 from clientz.services import inderes
+
 
 api = inderes.API()
 
@@ -97,6 +98,37 @@ pb = inderes.PriceToBook(year="next").download(api)
 ```
 
 ## Statistics Finland
+
+Querying historical Finnish apartment price data.
+
+```python
+
+from clientz.services import statfin
+
+
+api = statfin.API()
+kontula = statfin.QuarterlyZip("00940")
+# 
+# kontula.iloc[[42, 123, 141]]
+# 
+#      Postinumero  Talotyyppi Vuosineljännes  keskihinta_ptno  lkm_julk
+# 42           940           1     2020-07-01              NaN         2
+# 123          940           3     2019-04-01           2142.0        37
+# 141          940           4     2013-01-01              NaN        37
+#
+house_types = statfin.HouseTypes().download(api)
+#
+# house_types
+# 
+# {'1': 'Kerrostalo yksiöt',
+#  '2': 'Kerrostalo kaksiot',
+#  '3': 'Kerrostalo kolmiot+',
+#  '4': 'Kerrostalot yhteensä',
+#  '5': 'Rivitalot yhteensä',
+#  '6': 'Talotyypit yhteensä'}
+# 
+
+```
 
 ### Apartment prices
 
