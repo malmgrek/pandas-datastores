@@ -7,7 +7,7 @@ import requests
 import attr
 import pandas as pd
 
-from clientz import Endpoint, utils
+from stores import Endpoint, utils
 
 
 def API():
@@ -23,7 +23,7 @@ def API():
 
     .. code-block:: python
 
-        from clientz.yahoofinance import API
+        from stores.yahoofinance import API
 
         api = API()
         res = api.chart.get("MSFT")  # Microsoft

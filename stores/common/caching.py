@@ -8,7 +8,7 @@ from typing import Callable, Iterable
 import attr
 import pandas as pd
 
-from clientz.common import utils
+from stores.common import utils
 
 
 @attr.s(frozen=True)

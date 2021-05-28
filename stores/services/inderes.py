@@ -12,11 +12,11 @@ import attr
 import pandas as pd
 from user_agent import generate_user_agent
 
-from clientz import Endpoint, utils
-from clientz.common.caching import (JSON, Pickle, lift)
+from stores import Endpoint, utils
+from stores.common.caching import (JSON, Pickle, lift)
 
 
-CACHE = os.path.abspath(".clientz-inderes")
+CACHE = os.path.abspath(".pandas-datastores")
 
 
 def here(*args):
@@ -79,7 +79,7 @@ def API():
 
     .. code-block :: python
 
-        from clientz.inderes import API
+        from stores.inderes import API
 
         api = API()
         table = api.data_table.get()

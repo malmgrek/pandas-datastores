@@ -1,6 +1,6 @@
 """Miscellaneous utility functions
 
-TODO: Migrate load progress and async stuff to Clientz
+TODO: Migrate load progress and async stuff to Pandas-datastores
 
 """
 import functools

@@ -2,13 +2,13 @@ import setuptools
 
 
 setuptools.setup(
-    name="clientz",
+    name="stores",
     version="0.0.0",
     author="Malmgrek",
     author_email="foo.bar@email.com",
     description="Clients for various data APIs",
-    url="https://github.com/malmgrek/clientz",
-    packages=["clientz"],
+    url="https://github.com/malmgrek/pandas-datastores",
+    packages=["stores"],
     install_requires=[
         "attrs",
         "numpy",
@@ -26,7 +26,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering",
-    ],
-    long_description=read('README.md'),
-    long_description_content_type="text/markdown",
+    ]
 )

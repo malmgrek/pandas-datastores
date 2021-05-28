@@ -39,11 +39,11 @@ from time import sleep
 import attr
 import pandas as pd
 
-from clientz import Endpoint, utils
-from clientz.common.caching import (JSON, Pickle, lift, bind, Concat)
+from stores import Endpoint, utils
+from stores.common.caching import (JSON, Pickle, lift, bind, Concat)
 
 
-CACHE = os.path.abspath(".clientz-statfin")
+CACHE = os.path.abspath(".pandas-datastores")
 
 
 def transform_get_response(res):
@@ -71,7 +71,7 @@ def API():
 
     .. code-block:: python
 
-        from clientz import statfin
+        from stores import statfin
 
         api = statfin.API()
 

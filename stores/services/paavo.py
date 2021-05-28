@@ -11,14 +11,14 @@ import requests
 import attr
 import pandas as pd
 
-from clientz import Endpoint, utils
-from clientz.services.statfin import transform_get_response
+from stores import Endpoint, utils
+from stores.services.statfin import transform_get_response
 
 
 def API():
     """Client for Paavo service for demographic data
 
-    User interface similar to ``clientz.statfin``.
+    User interface similar to ``stores.statfin``.
 
     """
 

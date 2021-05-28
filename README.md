@@ -1,7 +1,7 @@
-# Clientz – Data downloading and caching
+# Pandas-datastores – Data downloading and caching to Pandas data types
 
 This Python project contains some generic data loading and caching tools usable
-in implementing clients for data APIs. Below are examples for existing modules
+in implementing query clients for data APIs. Below are examples for existing modules
 for querying data from different services.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
@@ -24,7 +24,7 @@ The data source contains various quantities.
 
 ```python
 
-from clientz.services import fmi
+from stores.services import fmi
 
 
 api = fmi.API()
@@ -51,8 +51,7 @@ data = api.forecast_hirlam_surface_point_hourly_2d.get(lat=60.1699, lon=24.9384)
 
 ### NOTE
 
-Requires installing the packages `beautifulsoup4` and `lxml` manually until I
-update e.g. package conda requirements.
+Dependencies: `bs4`, `lxml`, `user_agent`.
 
 ## Inderes
 
@@ -60,7 +59,7 @@ Download fundamentals for various Finnish companies listed in Helsinki stock exc
 
 ```python
 
-from clientz.services import inderes
+from stores.services import inderes
 
 
 api = inderes.API()
@@ -103,7 +102,7 @@ Querying historical Finnish apartment price data.
 
 ```python
 
-from clientz.services import statfin
+from stores.services import statfin
 
 
 api = statfin.API()
@@ -133,4 +132,6 @@ house_types = statfin.HouseTypes().download(api)
 ### Apartment prices
 
 ### Paavo
+
+## Oikotie
 

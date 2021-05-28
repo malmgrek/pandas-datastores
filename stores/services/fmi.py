@@ -8,11 +8,11 @@ import requests
 import attr
 import pandas as pd
 
-from clientz import Endpoint, utils
-from clientz.common.caching import Pickle
+from stores import Endpoint, utils
+from stores.common.caching import Pickle
 
 
-CACHE = os.path.abspath(".clientz-institute")
+CACHE = os.path.abspath(".pandas-datastores/fmi")
 
 
 def API():
@@ -39,10 +39,12 @@ def API():
 
     .. code-block:: python
 
-        from clientz.fmi import API
+        from stores.fmi import API
 
         api = API()
-        data = api.forecast_hirlam_surface_point_hourly.get(lat=60.0, lon=20.0)
+        data = api.forecast_hirlam_surface_point_hourly_2d.get(
+            lat=60.0, lon=20.0
+        )
 
     Notes
     -----
